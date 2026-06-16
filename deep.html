@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据室 · 跟着 Leopold 赚大钱</title>
+<meta name="description" content="Leopold Aschenbrenner 的世界模型 × SEC 13F 实盘 × 每日推演 × 凸性雷达">
+<style>
+:root{
+  --paper:#f7f4ec; --panel:#fcfaf3; --panel2:#efeadd; --ink:#16130d; --sub:#7c7565;
+  --hair:#dcd4c2; --hair2:#e8e1cf;
+  --red:#fb4d26; --redbg:#fde7df; --reddeep:#d63a17;
+  --green:#147a4a; --greenbg:#e7f3ea; --call:#4d9c7c;
+  --gold:#b8791f; --goldbg:#f7ecd0;
+  --blue:#16130d;
+  --disp:"SF Pro Display",-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --body:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:"SF Mono",Menlo,Consolas,"Courier New",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 26px}
+a{color:var(--ink)}
+.mono{font-family:var(--mono)}
+
+/* ───────── masthead ───────── */
+header{padding:34px 0 0}
+.rule2{border-top:3px solid var(--ink);border-bottom:1px solid var(--ink);height:7px;margin-bottom:22px}
+.mast{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.title-zone h1{font-family:var(--disp);font-weight:900;font-size:52px;line-height:1.12;letter-spacing:.5px}
+.title-zone h1 .en{font-size:30px;letter-spacing:2px;font-style:italic}
+.subtitle{margin-top:8px;color:var(--sub);font-size:14px;letter-spacing:1.5px}
+.subtitle b{color:var(--ink)}
+.seal{display:inline-block;vertical-align:14px;margin-left:14px;border:2.5px solid var(--red);color:var(--red);
+  font-family:var(--disp);font-weight:900;font-size:15px;line-height:1.25;padding:5px 7px;border-radius:5px;
+  transform:rotate(-7deg);letter-spacing:2px;opacity:.88;box-shadow:0 0 0 1px rgba(176,58,33,.15) inset}
+.mast-meta{text-align:right;font-size:12.5px;color:var(--sub);line-height:2}
+.mast-meta .due{display:inline-block;border:1px solid var(--hair);background:var(--panel);
+  padding:2px 10px;border-radius:3px;color:var(--ink)}
+.mast-meta .due b{color:var(--red);font-family:var(--mono)}
+.today-band{margin:20px 0 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--hair);
+  padding:10px 2px;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.today-band .tag{font-family:var(--disp);font-weight:900;color:var(--red);white-space:nowrap;letter-spacing:1px}
+.today-band a{font-size:15.5px;text-decoration:none;border-bottom:1px dashed var(--hair)}
+.today-band a:hover{color:var(--red);border-color:var(--red)}
+
+/* ───────── nav ───────── */
+nav{position:sticky;top:0;z-index:50;background:rgba(243,245,247,.95);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--hair);margin-top:18px}
+nav .wrap{display:flex;gap:26px;padding-top:9px;padding-bottom:9px;font-size:13.5px;overflow-x:auto}
+nav a{text-decoration:none;color:var(--sub);white-space:nowrap;letter-spacing:1px}
+nav a b{font-family:var(--disp);color:var(--ink);margin-right:4px}
+nav a:hover{color:var(--red)}
+nav .gen{margin-left:auto;color:var(--sub);font-size:12px;white-space:nowrap}
+
+/* ───────── sections ───────── */
+.sec{padding:46px 0 10px;opacity:0;transform:translateY(14px);animation:rise .7s forwards}
+.sec:nth-of-type(1){animation-delay:.05s}.sec:nth-of-type(2){animation-delay:.15s}
+.sec:nth-of-type(3){animation-delay:.25s}.sec:nth-of-type(4){animation-delay:.35s}
+@keyframes rise{to{opacity:1;transform:none}}
+.sec-head{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:24px}
+.sec-head .no{font-family:var(--disp);font-weight:900;font-size:40px;color:var(--red)}
+.sec-head h2{font-family:var(--disp);font-weight:900;font-size:27px;letter-spacing:2px}
+.sec-head .en{color:var(--sub);font-size:12px;letter-spacing:2.5px;text-transform:uppercase}
+.sec-head .note{margin-left:auto;font-size:12.5px;color:var(--sub)}
+
+.panel{background:var(--panel);border:1px solid var(--hair);border-radius:6px;padding:18px 20px;
+  box-shadow:0 1px 0 rgba(120,100,60,.06)}
+.hint{font-size:12.5px;color:var(--sub)}
+.chip{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:10px;border:1px solid var(--hair);
+  background:var(--panel2);color:var(--sub);white-space:nowrap}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+
+/* ───────── S1 世界模型 ───────── */
+.chain{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-bottom:22px}
+.chain .node{position:relative;background:var(--panel);border:1px solid var(--hair);padding:14px 14px 12px;margin-right:26px;border-radius:6px}
+.chain .node:last-child{margin-right:0}
+.chain .node::after{content:"→";position:absolute;right:-23px;top:42%;color:var(--red);font-weight:700;font-size:17px}
+.chain .node:last-child::after{content:""}
+.chain .k{font-family:var(--disp);font-weight:900;font-size:16.5px;line-height:1.4}
+.chain .v{font-size:12px;color:var(--sub);margin-top:5px;line-height:1.6}
+.chain .node.last{background:var(--ink);border-color:var(--ink)}
+.chain .node.last .k{color:var(--paper)}
+.chain .node.last .v{color:#cfc5a9}
+.s1-grid{display:grid;grid-template-columns:1.25fr .9fr;gap:18px}
+.translate li{list-style:none;padding:10px 0;border-bottom:1px dashed var(--hair2);display:flex;gap:12px}
+.translate li:last-child{border-bottom:none}
+.translate .ico{font-family:var(--disp);font-weight:900;color:var(--red);font-size:17px;white-space:nowrap}
+.translate b{font-size:15px}
+.translate p{font-size:13px;color:var(--sub);line-height:1.7}
+.quotecard{border-left:4px solid var(--red);background:var(--panel);padding:16px 18px;margin-bottom:14px}
+.quotecard .q{font-family:var(--disp);font-weight:900;font-size:19px;line-height:1.6}
+.quotecard .src{font-size:12px;color:var(--sub);margin-top:8px}
+.checkup{background:var(--panel2);border:1px solid var(--hair);border-radius:6px;padding:13px 16px;font-size:13px}
+.checkup b{color:var(--green)} .checkup i{color:var(--red);font-style:normal}
+#aumStrip{margin-top:20px}
+
+/* ───────── S2 实盘 ───────── */
+.evo{display:flex;gap:14px;align-items:flex-end;padding:18px 6px 4px;overflow-x:auto}
+.evo .col{flex:1;min-width:96px;text-align:center}
+.evo .bars{display:flex;flex-direction:column-reverse;justify-content:flex-start;height:190px;
+  border-bottom:2px solid var(--ink);position:relative}
+.evo .seg{width:62%;margin:0 auto}
+.evo .seg.sh{background:var(--green)} .evo .seg.call{background:var(--call)} .evo .seg.put{background:var(--red)}
+.evo .tot{font-family:var(--mono);font-size:12.5px;margin-top:7px}
+.evo .lab{font-family:var(--disp);font-weight:900;font-size:14px}
+.evo .nn{font-size:11px;color:var(--sub)}
+.legend{display:flex;gap:18px;font-size:12px;color:var(--sub);margin:10px 2px 0;flex-wrap:wrap}
+.legend .sw{display:inline-block;width:11px;height:11px;margin-right:5px;vertical-align:-1px}
+.stages{margin-top:16px;font-size:13px;color:var(--sub)}
+.stages li{list-style:none;padding:7px 0;border-bottom:1px dashed var(--hair2);display:flex;gap:12px}
+.stages li:last-child{border:none}
+.stages .ql{font-family:var(--mono);color:var(--ink);font-weight:600;white-space:nowrap}
+
+.book{display:grid;grid-template-columns:1.18fr .82fr;gap:18px;margin-top:26px}
+.bookhead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
+.bookhead h3{font-family:var(--disp);font-weight:900;font-size:18px;letter-spacing:1px}
+.bookhead .sum{font-family:var(--mono);font-size:13px}
+.bookhead .sum b{font-size:16px}
+.longs .row{display:grid;grid-template-columns:88px 1fr 110px;gap:10px;align-items:center;
+  padding:7.5px 4px;border-bottom:1px solid var(--hair2)}
+.longs .row:hover{background:var(--panel2)}
+.longs .tk{font-family:var(--mono);font-weight:700;font-size:14px}
+.longs .tk .typ{font-size:10px;color:var(--call);border:1px solid var(--call);border-radius:3px;padding:0 3px;margin-left:4px;vertical-align:1px}
+.longs .nm{font-size:11px;color:var(--sub);line-height:1.4}
+.longs .barzone{position:relative;height:30px;display:flex;align-items:center}
+.longs .bar{height:17px;background:var(--green);border-radius:0 3px 3px 0;min-width:2px;opacity:.88}
+.longs .bar.call{background:var(--call)}
+.longs .bv{font-family:var(--mono);font-size:12px;margin-left:8px;white-space:nowrap}
+.longs .right{text-align:right;font-family:var(--mono);font-size:11.5px;line-height:1.5}
+.drift-up{color:var(--green)} .drift-dn{color:var(--red)}
+.morep{font-size:12px;color:var(--sub);padding:8px 4px 0}
+
+.wall{background:linear-gradient(180deg,#fdf1ef,#fbe7e4);border:1px solid #ecc4be;border-radius:6px;padding:16px}
+.wall h3{font-family:var(--disp);font-weight:900;font-size:18px;color:var(--reddeep);letter-spacing:1px}
+.wall .tot{font-family:var(--mono);font-size:13px;color:var(--reddeep);margin:2px 0 12px}
+.wall .tot b{font-size:19px}
+.brick{background:var(--red);color:#fdf3f1;border-radius:3px;margin-bottom:5px;padding:5px 10px;
+  display:flex;justify-content:space-between;align-items:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
+.brick .tk{font-family:var(--mono);font-weight:700;font-size:13px}
+.brick .nm{font-size:10.5px;opacity:.75;margin-left:6px}
+.brick .v{font-family:var(--mono);font-size:12px}
+.wall .note{font-size:11.5px;color:#9d4a3e;margin-top:10px;line-height:1.7}
+
+.diffgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+.diffcol{background:var(--panel);border:1px solid var(--hair);border-radius:6px;padding:12px 14px}
+.diffcol h4{font-family:var(--disp);font-size:14.5px;letter-spacing:1px;border-bottom:1px solid var(--hair);padding-bottom:6px;margin-bottom:8px}
+.diffcol.add h4{color:var(--green)} .diffcol.exit h4{color:var(--red)}
+.diffcol.up h4{color:var(--gold)} .diffcol.down h4{color:var(--sub)}
+.diffcol .it{font-size:12.5px;padding:3.5px 0;display:flex;justify-content:space-between;gap:8px}
+.diffcol .it .tk{font-family:var(--mono);font-weight:600}
+.diffcol .it .tk small{color:var(--sub);font-weight:400}
+.diffcol .it .v{font-family:var(--mono);color:var(--sub);font-size:11.5px;white-space:nowrap}
+
+.honest{margin-top:26px;border:1.5px dashed var(--gold);background:var(--goldbg);border-radius:6px;padding:14px 18px;font-size:13px}
+.honest b{font-family:var(--disp);letter-spacing:1px}
+.honest ul{margin:6px 0 0 18px}
+.honest li{margin:2px 0;color:#6b5a30}
+
+/* ───────── S3 每日推演 ───────── */
+.daily-card{background:var(--panel);border:1px solid var(--hair);border-radius:6px;overflow:hidden}
+.daily-head{background:var(--ink);color:var(--paper);padding:13px 20px;display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.daily-head .d{font-family:var(--mono);color:#e8c9a8;font-size:13px;white-space:nowrap}
+.daily-head h3{font-family:var(--disp);font-weight:900;font-size:18.5px;line-height:1.5;letter-spacing:.5px}
+.daily-body{padding:6px 20px 16px}
+.dblock{padding:13px 0;border-bottom:1px dashed var(--hair2)}
+.dblock:last-child{border:none}
+.dblock .bt{font-family:var(--disp);font-weight:900;font-size:14.5px;letter-spacing:1.5px;margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.rel{font-size:10.5px;padding:1px 7px;border-radius:9px;font-family:var(--body);letter-spacing:.5px;font-weight:400}
+.rel.fact{background:var(--greenbg);color:var(--green);border:1px solid #bdd3b3}
+.rel.infer{background:var(--goldbg);color:var(--gold);border:1px solid #ddcb9a}
+.facts li{list-style:none;font-size:13.5px;padding:5px 0 5px 16px;position:relative;line-height:1.8}
+.facts li::before{content:"▍";color:var(--green);position:absolute;left:0;font-size:12px}
+.facts .src{font-size:11px;color:var(--sub);font-family:var(--mono);margin-left:6px;white-space:nowrap}
+.lens-p{font-size:13.5px;line-height:1.9}
+.orders li{list-style:none;display:flex;gap:12px;padding:6px 0;font-size:13.5px;line-height:1.8}
+.orders .lv{font-family:var(--disp);font-weight:900;white-space:nowrap;font-size:13px;padding-top:2px}
+.orders li:nth-child(1) .lv{color:var(--sub)} .orders li:nth-child(2) .lv{color:var(--green)} .orders li:nth-child(3) .lv{color:var(--gold)}
+.review-p,.stance-p{font-size:13px;color:#5c5340;line-height:1.9}
+.stance-p{border-left:3px solid var(--hair);padding-left:12px}
+.daily-policy{margin-top:14px;font-size:12.5px;color:var(--sub)}
+
+/* ───────── S4 凸性雷达 ───────── */
+.cv-intro{font-size:13.5px;margin-bottom:18px;line-height:1.9}
+.cv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.cv{background:var(--panel);border:1px solid var(--hair);border-radius:6px;padding:14px 16px;position:relative;
+  transition:transform .15s, box-shadow .15s}
+.cv:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(110,90,50,.13)}
+.cv .top{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}
+.cv .tk{font-family:var(--mono);font-weight:700;font-size:19px}
+.cv .nm{font-size:12px;color:var(--sub)}
+.cv .live{font-family:var(--mono);font-size:12px;margin:2px 0 8px}
+.cv .pos{font-family:var(--mono);font-size:11.5px;color:var(--sub);border-top:1px solid var(--hair2);
+  border-bottom:1px solid var(--hair2);padding:5px 0;margin:8px 0}
+.cv .chainline{font-size:12.5px;line-height:1.75;margin:7px 0}
+.cv .chainline b{color:var(--red);font-weight:600}
+.cv .cx{font-size:12.5px;color:var(--sub);line-height:1.75}
+.cv .stamp{position:absolute;top:12px;right:12px;font-family:var(--disp);font-weight:900;font-size:11px;
+  border:1.5px solid;border-radius:4px;padding:2px 7px;transform:rotate(5deg);letter-spacing:1px;opacity:.9;background:rgba(255,255,255,.5)}
+.cv .stamp.hot{color:var(--red);border-color:var(--red)}
+.cv .stamp.watch{color:var(--gold);border-color:var(--gold)}
+.cv .stamp.cool{color:var(--green);border-color:var(--green)}
+.cv-bar{margin-top:18px;background:var(--panel2);border:1px solid var(--hair);border-radius:6px;padding:14px 18px;font-size:13px}
+.cv-bar b{font-family:var(--disp)}
+.cv-bar li{margin-left:18px}
+
+/* ───────── footer ───────── */
+footer{margin-top:54px;border-top:3px solid var(--ink);padding:26px 0 60px}
+.f-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:26px;font-size:12.5px;color:var(--sub)}
+footer h5{font-family:var(--disp);font-size:14px;color:var(--ink);letter-spacing:2px;margin-bottom:9px}
+footer li{list-style:none;padding:2.5px 0}
+footer a{color:var(--sub)}
+footer a:hover{color:var(--red)}
+.f-dis{margin-top:24px;padding-top:14px;border-top:1px solid var(--hair);font-size:11.5px;color:#9a8f74;line-height:1.9}
+
+@media (max-width:860px){
+  .title-zone h1{font-size:34px}.title-zone h1 .en{font-size:21px}
+  .chain{grid-template-columns:1fr 1fr;gap:10px}
+  .chain .node{margin-right:0}.chain .node::after{content:""}
+  .s1-grid,.book,.f-grid{grid-template-columns:1fr}
+  .diffgrid{grid-template-columns:1fr 1fr}
+  .cv-grid{grid-template-columns:1fr}
+  .mast-meta{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="rule2"></div>
+  <div class="mast">
+    <div class="title-zone">
+      <h1>跟着 <span class="en">LEOPOLD</span> 赚大钱<span class="seal">实盘<br>为证</span></h1>
+      <div class="subtitle"><b>数据室(次页)</b> ｜ 世界模型 × SEC 13F 实盘 × 每日推演 × 凸性雷达 ｜ 数据直连 EDGAR ｜ <a href="index.html" style="color:var(--red)">每日判断与荐股在首页 →</a></div>
+    </div>
+    <div class="mast-meta">
+      <div id="todayDate" class="mono"></div>
+      <div class="due">下一份 13F(2026Q2)截止 <b>2026-08-14</b> · 还有 <b id="dueDays">–</b> 天</div>
+      <div>行情快照 <span id="quotesAsof" class="mono"></span></div>
+    </div>
+  </div>
+  <div class="today-band">
+    <span class="tag" id="bandDate">【今日】</span>
+    <a href="#s3" id="bandHeadline">加载中…</a>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <a href="index.html" style="color:var(--red);font-weight:700">← 首页</a>
+  <a href="#s1"><b>壹</b>世界模型</a>
+  <a href="#s2"><b>贰</b>实盘 13F</a>
+  <a href="#s3"><b>叁</b>每日推演</a>
+  <a href="#s4"><b>肆</b>凸性雷达</a>
+  <a href="#foot"><b>卷尾</b>方法与来源</a>
+  <span class="gen" id="genAt"></span>
+</div></nav>
+
+<main class="wrap">
+
+  <!-- ════ 壹 世界模型 ════ -->
+  <section class="sec" id="s1">
+    <div class="sec-head">
+      <span class="no">壹</span><h2>世界模型</h2><span class="en">The Thesis</span>
+      <span class="note">《Situational Awareness》2024-06,165页 → 一条因果链</span>
+    </div>
+    <div class="chain">
+      <div class="node"><div class="k">算力 OOM 堆叠</div><div class="v">每年有效算力×3~4(芯片+集群+算法),趋势线没有弯</div></div>
+      <div class="node"><div class="k">~2027 AGI 可能</div><div class="v">从 GPT-4 到「能干 AI 研究员的活」只差几个数量级</div></div>
+      <div class="node"><div class="k">智能爆炸</div><div class="v">数亿个自动化研究员把十年压缩成一年</div></div>
+      <div class="node"><div class="k">万亿美元集群</div><div class="v">史上最大工业动员:GW 级电力、晶圆、机柜、资本</div></div>
+      <div class="node last"><div class="k">瓶颈即租金</div><div class="v">短缺的不是想法,是电力·内存·土地·产能——租金流向瓶颈持有者</div></div>
+    </div>
+    <div class="s1-grid">
+      <div class="panel">
+        <ul class="translate">
+          <li><span class="ico">电</span><div><b>电力是瓶颈中的瓶颈</b><p>美国电网新增接入排队以年计。燃料电池(BE)、燃气轮机(SEI)、现场发电机组(PSIX)是「即插即用的电」;矿工(IREN/CORZ/RIOT)手里的电力合同+场地是现成的算力地皮。</p></div></li>
+          <li><span class="ico">存</span><div><b>内存与存储是 token 经济的耗材</b><p>推理时代 HBM/NAND/HDD 全面短缺——SNDK/MU 是他 2025Q3 起反复加注的主线,Q1'26 再用 call 加杠杆。</p></div></li>
+          <li><span class="ico">空</span><div><b>拥挤的「显学」用 put 对冲</b><p>人人都看见的算力故事(NVDA/AVGO/SMH/ORCL)他不做多,反而挂出 $8.46B 名义 put 墙:看多 AI 基建 ≠ 看多所有 AI 股。</p></div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="quotecard">
+          <div class="q">"最有价值的资产,可能不是算法,而是电力与算力。"</div>
+          <div class="src">——其论点之转述,Fortune 2026-03 对该基金策略的报道;原典见 <a href="https://situational-awareness.ai/" target="_blank">situational-awareness.ai</a></div>
+        </div>
+        <div class="checkup">
+          <b>框架两年体检</b> ✦ 方向已兑现:算力 capex 军备竞赛、电力短缺、内存超级周期皆为现实;<i>仍未验证:</i>「AGI ~2027」时间表与智能爆炸——这是整个框架最大的单点赌注,也是他用 put 管理的尾部。
+        </div>
+        <div id="aumStrip" class="panel" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 贰 实盘 13F ════ -->
+  <section class="sec" id="s2">
+    <div class="sec-head">
+      <span class="no">贰</span><h2>实盘 13F</h2><span class="en">What He Actually Owns</span>
+      <span class="note" id="s2note"></span>
+    </div>
+
+    <p class="hint" style="margin:-10px 0 14px">⚠ 13F 是 45 天前的过去式——它的价值是<b>校准他的世界模型</b>、以及在尾部找他的凸性下注;不是用来抄作业的。往前看的判断与荐股在<a href="index.html">首页</a>。</p>
+    <div class="panel">
+      <div class="bookhead"><h3>六个季度:从 $2.5 亿到 $137 亿</h3><span class="hint">柱高=13F 申报总市值(线性);颜色=结构</span></div>
+      <div class="evo" id="evo"></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--green)"></span>多头股票</span>
+        <span><span class="sw" style="background:var(--call)"></span>CALL(名义)</span>
+        <span><span class="sw" style="background:var(--red)"></span>PUT(名义)</span>
+      </div>
+      <ul class="stages" id="stages"></ul>
+    </div>
+
+    <div class="book">
+      <div class="panel longs">
+        <div class="bookhead"><h3 id="longTitle">多头书</h3><span class="sum" id="longSum"></span></div>
+        <div id="longRows"></div>
+        <div class="morep" id="longMore"></div>
+      </div>
+      <div class="wall">
+        <h3>PUT 墙 —— 对拥挤面的对冲</h3>
+        <div class="tot" id="putTot"></div>
+        <div id="bricks"></div>
+        <div class="note">▲ 13F 中期权按<b>底层股票名义市值</b>申报(非权利金),且不披露行权价与到期日。这是一面「如果芯片复合体摔跤我有保护」的墙,不能直接读成等额做空。</div>
+      </div>
+    </div>
+
+    <div class="diffgrid" id="diffgrid"></div>
+
+    <div class="honest">
+      <b>诚实边界</b>——读 13F 必须知道的四件事:
+      <ul>
+        <li>滞后 45 天:最新持仓是季度末快照,他此刻的书可能已不同;</li>
+        <li>只见美股多头与持有的期权:空头现货、海外持仓、现金、期货全都看不见;</li>
+        <li>PUT/CALL 的金额=底层名义,不是投入的钱;无行权价、无到期日;</li>
+        <li>13F 市值增长 ≠ 基金收益(含新申购)。媒体上「+2065%」一类数字是把申购当收益的误读。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════ 叁 每日推演 ════ -->
+  <section class="sec" id="s3">
+    <div class="sec-head">
+      <span class="no">叁</span><h2>每日推演</h2><span class="en">Daily Lens</span>
+      <span class="note">用他的框架读当天的盘——可靠性优先,无新事实则停更</span>
+    </div>
+    <div id="dailyZone"></div>
+    <div class="daily-policy">▍纪律:事实层全部带来源与时间戳;推演层永远标注「推演」;不为日更而注水——没有值得说的就写「今日无推演」。</div>
+  </section>
+
+  <!-- ════ 肆 凸性雷达 ════ -->
+  <section class="sec" id="s4">
+    <div class="sec-head">
+      <span class="no">肆</span><h2>凸性雷达</h2><span class="en">Convexity Radar</span>
+      <span class="note">Leopold 大框架 × Serenity 高凸性筛选</span>
+    </div>
+    <p class="cv-intro">
+      一只 $137 亿的基金,书里却躺着一排 $600 万~$4,400 万的小票——<b>这些尾部仓位就是他自己的凸性下注</b>(亏了不疼,对了改变净值)。
+      第一期雷达池=他的尾部 9 只,逐只标注推导链与「是否已爆发」;延伸候选须过下方质量栏才能入池。
+    </p>
+    <div class="cv-grid" id="cvGrid"></div>
+    <div class="cv-bar">
+      <b>入池质量栏(Serenity 铁律)</b>:① 必须有从框架节点出发的二阶/三阶推导链,不许「因为新闻提到」;② 必须仍未被重新定价(已爆发的只标记、不追);③ 必须有真实现价与流动性核查;④ 事实(他持有)与推演(我们的延伸)永远分开标注。<br>
+      <span class="hint">当前延伸候选:暂无——宁缺毋滥,候选由每日推演喂入,过栏才上墙。</span>
+    </div>
+  </section>
+</main>
+
+<!-- ════ 卷尾 ════ -->
+<footer id="foot"><div class="wrap">
+  <div class="f-grid">
+    <div>
+      <h5>方法论四原则</h5>
+      <li>可靠性 &gt; 时效性:判断层只放核实过的内容</li>
+      <li>二阶优先:一阶已被定价,钱在第二层</li>
+      <li>事实与推演永远分离标注</li>
+      <li>宁缺毋滥:没有就诚实停着</li>
+    </div>
+    <div>
+      <h5>一手来源</h5>
+      <li><a href="https://situational-awareness.ai/" target="_blank">situational-awareness.ai(原典 PDF)</a></li>
+      <li><a id="edgarLink" href="#" target="_blank">SEC EDGAR · CIK 0002045724(全部 13F)</a></li>
+      <li id="filingLinks"></li>
+      <li>行情:CNBC restQuote(快照,见页眉时间戳)</li>
+    </div>
+    <div>
+      <h5>维护</h5>
+      <li class="mono" style="font-size:11.5px">python3 scripts/refresh.py # 行情+重建</li>
+      <li class="mono" style="font-size:11.5px">python3 scripts/refresh.py --edgar # 新13F</li>
+      <li>季度节奏:13F 截止后 1~3 天内更新</li>
+      <li>每日推演:盘中/盘后人工+Agent 共笔</li>
+    </div>
+  </div>
+  <div class="f-dis">
+    本页为个人研究工具,不构成任何投资建议。Leopold Aschenbrenner 与 Situational Awareness LP 未参与亦未背书本页。13F 数据有 45 天滞后,期权金额为底层名义;所有「推演」均为基于公开信息的猜测,可能完全错误。市场有风险,跟单更有风险——他可以在你看到申报之前就清仓。
+  </div>
+</div></footer>
+
+<script src="data/data.js"></script>
+<script>
+const SA = window.SA || {};
+const $ = id => document.getElementById(id);
+const fmtV = v => v >= 1e9 ? '$' + (v/1e9).toFixed(2) + 'B' : '$' + (v/1e6).toFixed(1) + 'M';
+const fmtP = p => (p >= 0 ? '+' : '') + p.toFixed(0) + '%';
+const SECTOR_COLOR = {
+  '电力与能源':'#3a7350','数据中心·神经云':'#46698c','矿工转AI':'#a07c2c','内存·存储':'#8a5a7a',
+  '芯片·设备':'#6b6b7d','光学':'#b06a4a','云·软件':'#707a6a','散热·设备':'#4a8a85','其他':'#8a8a7a'
+};
+const dot = s => `<span class="dot" style="background:${SECTOR_COLOR[s]||'#999'}"></span>`;
+
+// ── 页眉
+const Q = SA.quarters || [], latest = Q[Q.length-1], prev = Q[Q.length-2];
+$('todayDate').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+$('dueDays').textContent = Math.max(0, Math.ceil((new Date(SA.meta.nextDue) - Date.now())/864e5));
+$('quotesAsof').textContent = (SA.quotesAsof||'').replace('T',' ').slice(0,16) + ' ET';
+$('genAt').textContent = '更新 ' + (SA.generated||'');
+$('edgarLink').href = SA.meta.edgar;
+const D0 = (SA.daily||[])[0];
+if (D0){ $('bandDate').textContent = `【今日 · ${D0.date}】`; $('bandHeadline').textContent = D0.headline; }
+
+// ── 壹:AUM 条
+(()=>{
+  const max = Math.max(...Q.map(q=>q.totals.all));
+  $('aumStrip').innerHTML = '<div class="hint" style="margin-bottom:8px">13F 申报市值 · 六季 ×54(含申购,非收益)</div>' +
+    '<div style="display:flex;align-items:flex-end;gap:6px;height:74px">' +
+    Q.map(q=>`<div style="flex:1;text-align:center">
+      <div style="background:var(--green);opacity:.85;height:${Math.max(2,q.totals.all/max*56)}px;border-radius:2px 2px 0 0"></div>
+      <div class="mono" style="font-size:9.5px;color:var(--sub);margin-top:3px">${q.label.slice(2)}</div></div>`).join('') +
+    '</div>';
+})();
+
+// ── 贰:演化柱
+(()=>{
+  const max = Math.max(...Q.map(q=>q.totals.all));
+  $('evo').innerHTML = Q.map(q=>{
+    const h = t => Math.round(t/max*186);
+    return `<div class="col">
+      <div class="tot">${fmtV(q.totals.all)}</div>
+      <div class="bars">
+        <div class="seg sh" style="height:${h(q.totals.sh)}px"></div>
+        <div class="seg call" style="height:${h(q.totals.call)}px"></div>
+        <div class="seg put" style="height:${h(q.totals.put)}px"></div>
+      </div>
+      <div class="lab">${q.label}</div><div class="nn">${q.n} 项 · ${q.filed} 申报</div>
+    </div>`;
+  }).join('');
+  $('stages').innerHTML = Q.map(q=>`<li><span class="ql">${q.label}</span><span>${q.stage}</span></li>`).join('');
+  $('s2note').textContent = `最新:${latest.label} · ${latest.filed} 申报 · ${latest.n} 项 · 合计 ${fmtV(latest.totals.all)}`;
+})();
+
+// 隐含价(期末 value/amt)与现价漂移
+const impl = r => r.amt ? r.value / r.amt : 0;
+const driftHtml = r => {
+  const q = SA.quotes[r.ticker];
+  if (!q || !r.amt) return '<span class="hint">—</span>';
+  const d = (q.last / impl(r) - 1) * 100;
+  return `<span>$${q.last.toLocaleString()}</span><br><span class="${d>=0?'drift-up':'drift-dn'}">${fmtP(d)} 自3/31</span>`;
+};
+
+// ── 贰:多头书
+(()=>{
+  const longs = latest.rows.filter(r=>r.type!=='PUT').sort((a,b)=>b.value-a.value);
+  const totL = longs.reduce((s,r)=>s+r.value,0);
+  const top = longs.slice(0,14), rest = longs.slice(14);
+  const maxv = top[0].value;
+  $('longTitle').textContent = `多头书(股票+CALL)· ${latest.label}`;
+  $('longSum').innerHTML = `<b>${fmtV(totL)}</b> / ${longs.length} 项`;
+  $('longRows').innerHTML = top.map(r=>`<div class="row">
+    <div><div class="tk">${r.ticker||'—'}${r.type==='CALL'?'<span class="typ">CALL</span>':''}</div>
+      <div class="nm">${dot(r.sector)}${r.name}</div></div>
+    <div class="barzone"><div class="bar ${r.type==='CALL'?'call':''}" style="width:${Math.max(2,r.value/maxv*100)}%"></div>
+      <span class="bv">${fmtV(r.value)}</span></div>
+    <div class="right">${driftHtml(r)}</div>
+  </div>`).join('');
+  $('longMore').textContent = rest.length ? `…其余 ${rest.length} 项尾部合计 ${fmtV(rest.reduce((s,r)=>s+r.value,0))}(详见肆·凸性雷达)` : '';
+})();
+
+// ── 贰:PUT 墙
+(()=>{
+  const puts = latest.rows.filter(r=>r.type==='PUT').sort((a,b)=>b.value-a.value);
+  const tot = puts.reduce((s,r)=>s+r.value,0);
+  $('putTot').innerHTML = `名义合计 <b>${fmtV(tot)}</b> · ${puts.length} 只 · 占申报总值 ${(tot/latest.totals.all*100).toFixed(0)}%`;
+  const maxv = puts[0].value;
+  $('bricks').innerHTML = puts.map(r=>`<div class="brick" style="opacity:${0.55+0.45*r.value/maxv}">
+    <span><span class="tk">${r.ticker}</span><span class="nm">${r.name}</span></span>
+    <span class="v">${fmtV(r.value)}</span></div>`).join('');
+})();
+
+// ── 贰:季度变动
+(()=>{
+  const d = SA.diff; if(!d) return;
+  const cell = (r,extra) => `<div class="it"><span class="tk">${r.ticker||r.name}<small>${r.type!=='SH'?' '+r.type:''}</small></span><span class="v">${extra||fmtV(r.value)}</span></div>`;
+  const col = (cls,title,arr,fn) => `<div class="diffcol ${cls}"><h4>${title} ${arr.length}</h4>${arr.slice(0,9).map(fn).join('')||'<div class="hint">无</div>'}${arr.length>9?`<div class="hint">…共${arr.length}项</div>`:''}</div>`;
+  $('diffgrid').innerHTML =
+    col('add',`新进(vs ${d.vs})`, d.adds, r=>cell(r)) +
+    col('exit','清仓', d.exits, r=>cell(r)) +
+    col('up','加仓', d.ups, r=>cell(r, fmtP(r.pct)+' 股数')) +
+    col('down','减仓', d.downs, r=>cell(r, fmtP(r.pct)+' 股数'));
+})();
+
+// ── 叁:每日推演
+(()=>{
+  const zone = $('dailyZone');
+  if (!SA.daily || !SA.daily.length){ zone.innerHTML = '<div class="panel hint">今日无推演。</div>'; return; }
+  zone.innerHTML = SA.daily.map((d,i)=>`<div class="daily-card" style="margin-bottom:16px">
+    <div class="daily-head"><span class="d">${d.date}</span><h3>${d.headline}</h3></div>
+    <div class="daily-body">
+      <div class="dblock"><div class="bt">事实层 <span class="rel fact">✓ 有来源</span></div>
+        <ul class="facts">${d.facts.map(f=>`<li>${f.t}<span class="src">〔${f.src}〕</span></li>`).join('')}</ul></div>
+      <div class="dblock"><div class="bt">框架透镜 <span class="rel infer">推演</span></div><p class="lens-p">${d.lens}</p></div>
+      <div class="dblock"><div class="bt">三层推演 <span class="rel infer">推演 · 标注拥挤度</span></div>
+        <ul class="orders">${d.orders.map(o=>`<li><span class="lv">${o.level}</span><span>${o.text}</span></li>`).join('')}</ul></div>
+      <div class="dblock"><p class="review-p">${d.review}</p></div>
+      <div class="dblock"><p class="stance-p">${d.stance}</p></div>
+    </div>
+  </div>`).join('');
+})();
+
+// ── 肆:凸性雷达
+(()=>{
+  const rowsByTicker = {};
+  latest.rows.forEach(r=>{ if(r.type==='SH') rowsByTicker[r.ticker]=r; });
+  $('cvGrid').innerHTML = (SA.convexity||[]).map(c=>{
+    const r = rowsByTicker[c.ticker], q = SA.quotes[c.ticker];
+    let live = '';
+    if (q && r){ const dd = (q.last/impl(r)-1)*100;
+      live = `现价 $${q.last.toLocaleString()}(${q.chg})· <span class="${dd>=0?'drift-up':'drift-dn'}">${fmtP(dd)} 自3/31申报隐含价</span>`; }
+    else if (q){ live = `现价 $${q.last.toLocaleString()}(${q.chg})`; }
+    return `<div class="cv"><span class="stamp ${c.tone}">${c.status.split('·')[0].trim()}</span>
+      <div class="top"><span class="tk">${c.ticker}</span><span class="nm">${c.name}</span></div>
+      <div class="hint">${dot(c.sector)}${c.sector}</div>
+      <div class="live">${live}</div>
+      <div class="pos">他的仓位:${c.pos}</div>
+      <div class="chainline"><b>链</b> ${c.chain}</div>
+      <div class="cx"><b>凸</b> ${c.convex}</div>
+      <div class="hint" style="margin-top:7px">状态:${c.status}</div>
+    </div>`;
+  }).join('');
+})();
+
+// ── 卷尾:逐份申报链接
+$('filingLinks').innerHTML = '13F 各期:' + Q.slice().reverse().map(q=>{
+  const a = q.acc, dash = a.slice(0,10)+'-'+a.slice(10,12)+'-'+a.slice(12);
+  return `<a href="https://www.sec.gov/Archives/edgar/data/2045724/${a}/${dash}-index.htm" target="_blank">${q.label}</a>`;
+}).join(' · ');
+</script>
+</body>
+</html>

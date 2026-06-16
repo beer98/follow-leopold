@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跟着 Leopold 赚大钱 · 今日简报</title>
+<meta name="description" content="三个非共识结论 + 一个动作。每条都带证伪条件。数据直连 SEC EDGAR。">
+<style>
+:root{
+  --paper:#f7f4ec; --paper2:#efeadd; --ink:#16130d; --ink2:#48433a; --ink3:#7c7565;
+  --line:#dcd4c2; --rule:#16130d;
+  --coral:#fb4d26; --coral2:#d63a17; --coralbg:#fde7df;
+  --yellow:#ffd23f; --green:#147a4a; --red:#cf2e18;
+  --sans:-apple-system,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --num:"SF Pro Display",-apple-system,"Helvetica Neue",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+a{color:inherit;text-decoration:none}
+.hl{background:linear-gradient(transparent 58%, var(--yellow) 58%);padding:0 .06em}
+.cor{color:var(--coral)}
+
+/* ── 顶条 ── */
+.topbar{background:var(--ink);color:#f2ede0}
+.topbar .wrap{display:flex;gap:20px;align-items:center;padding:7px 32px;font-size:11.5px;letter-spacing:.14em;flex-wrap:wrap}
+.topbar b{color:var(--yellow);letter-spacing:.2em}
+.topbar .r{margin-left:auto;color:#b7af9c;letter-spacing:.1em}
+
+/* ── 报头 ── */
+header{padding:30px 0 0}
+.kicker{font-size:12px;letter-spacing:.34em;color:var(--ink3);text-transform:uppercase;margin-bottom:8px}
+.nameplate{font-family:var(--num);font-weight:800;font-size:clamp(40px,7.4vw,82px);line-height:.96;letter-spacing:-.02em;
+  -webkit-text-stroke:.4px var(--ink)}
+.nameplate .lp{color:var(--coral);font-style:italic;-webkit-text-stroke:.4px var(--coral)}
+.thickrule{height:9px;background:var(--rule);margin:18px 0 0}
+.thinrule{height:2px;background:var(--rule);margin-top:5px}
+
+/* ── nav ── */
+nav{position:sticky;top:0;z-index:50;background:rgba(247,244,236,.94);backdrop-filter:blur(7px);border-bottom:2px solid var(--ink)}
+nav .wrap{display:flex;gap:26px;padding:11px 32px;font-size:13px;overflow-x:auto;align-items:center}
+nav a{color:var(--ink2);white-space:nowrap;font-weight:500;letter-spacing:.02em}
+nav a.here{color:var(--coral);font-weight:700}
+nav a:hover{color:var(--coral)}
+nav .gen{margin-left:auto;color:var(--ink3);font-size:11px;letter-spacing:.08em}
+
+/* ── HERO 大标题区 ── */
+.hero{padding:38px 0 26px;border-bottom:2px solid var(--ink)}
+.hero .lead-k{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.16em;color:#fff;background:var(--coral);padding:3px 11px;margin-bottom:16px}
+.hero h1{font-weight:800;font-size:clamp(27px,4.4vw,49px);line-height:1.28;letter-spacing:-.012em;max-width:18ch}
+.hero .dek{margin-top:16px;font-size:clamp(15px,1.7vw,18px);color:var(--ink2);max-width:62ch;line-height:1.75}
+.hero .stamp{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:13px;color:var(--ink3)}
+.hero .stamp .lt{font-size:17px}
+
+/* ── 盘面 ticker ── */
+.ticker{display:flex;gap:0;flex-wrap:wrap;border:2px solid var(--ink);margin-top:24px;background:var(--paper)}
+.ticker .t{flex:1;min-width:88px;padding:9px 12px;border-right:1px solid var(--line)}
+.ticker .t:last-child{border-right:none}
+.ticker .t .k{font-size:11px;color:var(--ink3);letter-spacing:.04em}
+.ticker .t .v{font-family:var(--num);font-weight:700;font-size:15.5px;margin-top:1px}
+.ticker .t .c{font-family:var(--num);font-size:12px;font-weight:600}
+.up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--ink3)}
+.ticker .grp{flex:0 0 100%;background:var(--ink);color:var(--yellow);font-size:11px;letter-spacing:.18em;padding:4px 12px;border:none}
+
+/* ── 段标题 ── */
+.shead{display:flex;align-items:flex-end;gap:14px;margin:46px 0 6px}
+.shead .big{font-family:var(--num);font-weight:800;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.01em;line-height:1}
+.shead .sub{font-size:12.5px;color:var(--ink3);letter-spacing:.04em;padding-bottom:4px}
+.shead .ln{flex:1;height:2px;background:var(--ink);margin-bottom:7px}
+
+/* ── 结论 ── */
+.thesis{display:grid;grid-template-columns:auto 1fr;gap:26px;padding:30px 0;border-top:1px solid var(--line);
+  opacity:0;transform:translateY(14px);animation:rise .6s forwards}
+.thesis:nth-child(1){animation-delay:.05s}.thesis:nth-child(2){animation-delay:.13s}.thesis:nth-child(3){animation-delay:.21s}
+@keyframes rise{to{opacity:1;transform:none}}
+.thesis .num{font-family:var(--num);font-weight:800;font-size:clamp(54px,8vw,104px);line-height:.8;color:var(--coral);
+  letter-spacing:-.04em;-webkit-text-stroke:1px var(--coral)}
+.thesis .tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.tag{font-size:11.5px;letter-spacing:.06em;padding:2px 9px;border:1.5px solid var(--ink);font-weight:600}
+.tag.conv{background:var(--ink);color:var(--paper)}
+.thesis .stmt{font-size:clamp(19px,2.45vw,27px);font-weight:700;line-height:1.55;letter-spacing:-.008em}
+.thesis .stmt em{font-style:normal;background:linear-gradient(transparent 60%,var(--yellow) 60%);padding:0 .05em}
+.sub{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;margin-top:20px}
+.sub .blk{padding:13px 0;border-top:1px solid var(--line)}
+.sub .blk.fy{grid-column:1/-1;border-top:2px solid var(--coral);background:var(--coralbg);
+  margin:12px -16px 0;padding:12px 16px}
+.sub .lab{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--coral);margin-bottom:5px}
+.sub .fy .lab{color:var(--coral2)}
+.sub p{font-size:13.5px;color:var(--ink2);line-height:1.8}
+.sub .fy p{color:#8c2a16}
+
+/* ── 动作 黑场 ── */
+.act-band{background:var(--ink);color:var(--paper);margin:30px 0 0;padding:30px 32px}
+.act-band .h{font-family:var(--num);font-weight:800;font-size:26px;color:#fff;margin-bottom:4px}
+.act-band .hk{font-size:12px;color:var(--yellow);letter-spacing:.2em;margin-bottom:20px}
+.acts{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:26px}
+.acol h4{font-size:12px;letter-spacing:.18em;font-weight:700;padding-bottom:9px;margin-bottom:11px;border-bottom:1px solid #3a352b}
+.acol.do h4{color:var(--coral)} .acol.wait h4{color:#cdbf8e} .acol.dont h4{color:#b78}
+.acol .tk{font-family:var(--num);font-weight:800;font-size:24px}
+.acol.do .tk{color:var(--coral)}
+.acol .px{font-family:var(--num);font-size:12.5px;color:#a59d8a;margin-left:8px;font-weight:600}
+.acol p{font-size:13px;color:#d9d2c2;line-height:1.7;margin-top:5px}
+.acol li{list-style:none;font-size:13px;color:#d9d2c2;line-height:1.65;padding:5px 0}
+.acol li .tk{font-size:17px}
+.acol.dont li{color:#b8b09e}
+.lessons{border-top:1px solid #3a352b;margin-top:20px;padding-top:14px;font-size:12.5px;color:#a59d8a;line-height:1.85}
+.lessons b{color:var(--yellow);font-weight:600}
+
+/* ── 他是谁 ── */
+.man{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;padding:8px 0 0}
+.man .ph{width:96px;height:96px;object-fit:cover;border-radius:0;border:3px solid var(--ink);filter:grayscale(.15) contrast(1.03)}
+.man .nm{font-family:var(--num);font-weight:800;font-size:21px}
+.man .id{font-size:12.5px;color:var(--ink2);line-height:1.7;max-width:54ch;margin-top:2px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--ink);margin-top:18px}
+.stats .s{padding:14px 16px;border-right:1px solid var(--line)}
+.stats .s:last-child{border-right:none}
+.stats .s .v{font-family:var(--num);font-weight:800;font-size:clamp(22px,3vw,30px);line-height:1}
+.stats .s .v.g{color:var(--green)} .stats .s .v.r{color:var(--coral)}
+.stats .s .k{font-size:11.5px;color:var(--ink3);margin-top:5px;line-height:1.5}
+.deeds{font-size:12px;color:var(--ink3);margin-top:11px;font-family:var(--num);letter-spacing:.01em}
+.deeds .x{color:var(--green);font-weight:700}
+
+/* ── 数据室 ── */
+.rooms{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:2px solid var(--ink);margin-top:6px}
+.room{padding:16px 16px;border-right:1px solid var(--line);transition:background .15s}
+.room:last-child{border-right:none}
+.room:hover{background:var(--ink);color:var(--paper)}
+.room:hover .d,.room:hover .n{color:#b7af9c}
+.room .n{font-family:var(--num);font-size:11px;color:var(--coral);letter-spacing:.12em;font-weight:700}
+.room .t{font-weight:700;font-size:15px;margin-top:3px}
+.room .d{font-size:11.5px;color:var(--ink3);line-height:1.55;margin-top:3px}
+
+footer{margin-top:42px;border-top:9px solid var(--ink);padding:18px 0 56px}
+.f-src{font-size:12px;color:var(--ink3);margin-bottom:8px;letter-spacing:.02em}
+.f-src a{border-bottom:1px solid var(--line)}
+.f-dis{font-size:11.5px;color:#9a917e;line-height:1.85}
+
+@media (max-width:780px){
+  .thesis{grid-template-columns:1fr;gap:6px}
+  .thesis .num{font-size:52px}
+  .sub{grid-template-columns:1fr}
+  .acts{grid-template-columns:1fr;gap:20px}
+  .rooms{grid-template-columns:1fr 1fr}
+  .man{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <b>FOLLOW · LEOPOLD</b>
+  <span>跟着 Leopold 赚大钱</span>
+  <span class="r">SEC EDGAR 直连 · CIK 0002045724 · 下份 13F 倒计时 <span id="dueDays">–</span> 天</span>
+</div></div>
+
+<header class="wrap">
+  <div class="kicker" id="issue">№ 0000 · 今日简报</div>
+  <div class="nameplate">跟着 <span class="lp">LEOPOLD</span><br>赚大钱</div>
+  <div class="thickrule"></div><div class="thinrule"></div>
+</header>
+
+<nav><div class="wrap">
+  <a class="here" href="index.html">今日简报</a>
+  <a href="#concl">三个结论</a>
+  <a href="#act">动作</a>
+  <a href="#man">他是谁</a>
+  <a href="deep.html#s1">世界模型</a>
+  <a href="deep.html#s2">实盘 13F</a>
+  <a href="deep.html#s3">推演档案</a>
+  <a href="deep.html#s4">凸性雷达</a>
+  <span class="gen" id="genAt"></span>
+</div></nav>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="lead-k" id="leadDate">今日 · ——</span>
+    <h1 id="heroLine">加载中…</h1>
+    <div class="dek" id="heroDek"></div>
+    <div class="stamp"><span class="lt" id="heroLt">·</span><span id="heroTone"></span> · <span id="edition"></span> · 行情快照 <span id="quotesAsof"></span> ET</div>
+    <div class="ticker" id="ticker"></div>
+  </section>
+
+  <!-- 三个结论 -->
+  <section id="concl">
+    <div class="shead"><span class="big">今日三论</span><span class="sub">非共识 · 可证伪 · 带时间窗</span><span class="ln"></span></div>
+    <div id="conclZone"></div>
+  </section>
+
+  <!-- 动作 -->
+  <section id="act">
+    <div class="act-band">
+      <div class="hk">ACTION · 一天最多动手一件事</div>
+      <div class="h">动作</div>
+      <div class="acts" id="actZone"></div>
+      <div class="lessons" id="lessons"></div>
+    </div>
+  </section>
+
+  <!-- 他是谁 -->
+  <section id="man">
+    <div class="shead"><span class="big">凭什么跟他</span><span class="sub">完整持仓见数据室</span><span class="ln"></span></div>
+    <div class="man">
+      <img class="ph" src="assets/leopold.jpg" alt="Leopold Aschenbrenner">
+      <div>
+        <div class="nm">Leopold Aschenbrenner</div>
+        <div class="id">19 岁哥大第一名毕业 · 前 OpenAI 超对齐研究员 · 23 岁写《Situational Awareness》· 24 岁执掌百亿级基金(2024-09 创立于旧金山)</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="s"><div class="v g">+47%</div><div class="k">2025 上半年费后(标普同期 +6%)· FT 口径,未审计</div></div>
+      <div class="s"><div class="v">×54</div><div class="k">13F 申报市值 6 季增长(含申购,≠收益)· SEC EDGAR</div></div>
+      <div class="s"><div class="v r">$84.6亿</div><div class="k">名义 PUT 墙 · 2026Q1 对芯片拥挤面对冲</div></div>
+    </div>
+    <div class="deeds" id="deeds"></div>
+  </section>
+
+  <!-- 数据室 -->
+  <section>
+    <div class="shead"><span class="big">数据室</span><span class="sub">结论从哪来,证据都在次页</span><span class="ln"></span></div>
+    <div class="rooms">
+      <a class="room" href="deep.html#s1"><div class="n">01 / 模型</div><div class="t">世界模型</div><div class="d">165 页论文 → 一条因果链</div></a>
+      <a class="room" href="deep.html#s2"><div class="n">02 / 实盘</div><div class="t">实盘 13F</div><div class="d">六季演化 + PUT 墙(过去式,校准用)</div></a>
+      <a class="room" href="deep.html#s3"><div class="n">03 / 档案</div><div class="t">推演档案</div><div class="d">每日事实→透镜→三层推演,留档</div></a>
+      <a class="room" href="deep.html#s4"><div class="n">04 / 雷达</div><div class="t">凸性雷达</div><div class="d">他的尾部小票,逐只推导链</div></a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <div class="f-src">一手来源:<a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002045724&type=13F" target="_blank">SEC EDGAR</a> · <a href="https://situational-awareness.ai/" target="_blank">situational-awareness.ai</a> · 行情 CNBC 快照</div>
+  <div class="f-dis">本页为个人研究工具,不构成投资建议。结论是推演不是预言——每条都带证伪条件,被证伪就撤。收益率为媒体报道口径、未经审计;13F 市值增长含申购≠收益。他可以在你看到申报之前清仓。</div>
+</div></footer>
+
+<script src="data/data.js"></script>
+<script>
+const SA = window.SA || {};
+const $ = id => document.getElementById(id);
+const Q = SA.quarters || [];
+const D0 = (SA.daily||[])[0] || {};
+
+$('dueDays').textContent = Math.max(0, Math.ceil((new Date(SA.meta.nextDue) - Date.now())/864e5));
+$('genAt').textContent = 'UPD ' + (SA.generated||'');
+$('quotesAsof').textContent = (SA.quotesAsof||'').replace('T',' ').slice(5,16);
+const issueNo = (D0.date||'').replace(/-/g,'').slice(4);
+$('issue').textContent = `№ ${issueNo||'0000'} · 今日简报 · ${D0.date||''}`;
+
+// HERO
+const j = D0.judgment || {};
+$('leadDate').textContent = `今日 · ${D0.date||'——'}`;
+$('heroLine').textContent = D0.headline || '';
+$('heroDek').textContent = j.line || '';
+$('heroLt').textContent = j.light || '·';
+$('heroTone').textContent = j.tone || '';
+$('edition').textContent = D0.edition || '';
+
+// 盘面 ticker —— 用真实行情演示「排序」
+(()=>{
+  const fmtC = c => { const s=String(c||''); return {cls: s.startsWith('-')?'down':(parseFloat(s)>0?'up':'flat'), txt:s}; };
+  const cell = (sym,label)=>{ const q=SA.quotes[sym]; if(!q) return '';
+    const c=fmtC(q.chg);
+    return `<div class="t"><div class="k">${label}</div><div class="v">${q.last.toLocaleString()}</div><div class="c ${c.cls}">${c.txt}</div></div>`; };
+  let h = '';
+  h += cell('.VIX','VIX 恐慌') + cell('.SPX','标普500') + cell('.IXIC','纳指');
+  h += `<div class="grp">收租方 · 瓶颈(他的多头)— 领涨</div>`;
+  h += cell('BE','BE 燃料电池')+cell('CRWV','CRWV 神经云')+cell('IREN','IREN 算力')+cell('SNDK','SNDK 存储')+cell('CEG','CEG 核电');
+  h += `<div class="grp">短缺溢价 · 芯片(他的 PUT 墙)— 趴平</div>`;
+  h += cell('NVDA','NVDA')+cell('SMH','SMH 半导ETF')+cell('ORCL','ORCL')+cell('AVGO','AVGO')+cell('MU','MU 美光');
+  $('ticker').innerHTML = h;
+})();
+
+// 三个结论
+(()=>{
+  const cs = D0.conclusions || [];
+  $('conclZone').innerHTML = cs.length ? cs.map(c=>`
+    <div class="thesis">
+      <div class="num">${c.n}</div>
+      <div>
+        <div class="tags"><span class="tag conv">信心 ${c.conviction}</span><span class="tag">时间窗 ${c.window}</span></div>
+        <div class="stmt">${c.statement}</div>
+        <div class="sub">
+          <div class="blk"><div class="lab">为什么没人看见</div><p>${c.blindspot}</p></div>
+          <div class="blk"><div class="lab">推导链</div><p>${c.chain}</p></div>
+          <div class="blk fy"><div class="lab">证伪即撤</div><p>${c.falsify}</p></div>
+        </div>
+      </div>
+    </div>`).join('') : '<div class="thesis"><div></div><div class="stmt">今日无新结论——宁缺毋滥。</div></div>';
+})();
+
+// 动作
+(()=>{
+  const a = D0.action; if(!a){ $('actZone').innerHTML=''; return; }
+  const px = t => { const q=SA.quotes[t]; if(!q) return ''; const c=String(q.chg||'');
+    return `<span class="px">$${q.last.toLocaleString()} ${c}</span>`; };
+  $('actZone').innerHTML = `
+    <div class="acol do"><h4>DO — 动手研究</h4>
+      <div><span class="tk">${a.do.ticker}</span>${px(a.do.ticker)}</div><p>${a.do.text}</p></div>
+    <div class="acol wait"><h4>WAIT — 挂着等</h4>
+      ${a.wait.map(w=>`<li><span class="tk">${w.ticker}</span>${px(w.ticker)}<br>${w.text}</li>`).join('')}</div>
+    <div class="acol dont"><h4>DON'T — 不碰</h4>
+      ${a.dont.map(x=>`<li>✕ ${x}</li>`).join('')}</div>`;
+  $('lessons').innerHTML = (D0.lessons||[]).map(l=>`<b>▍</b>${l}`).join('<br>');
+})();
+
+// 实盘代表作
+(()=>{
+  const targets=['BE','SNDK','IREN','CRWV'], out=[];
+  targets.forEach(t=>{ for(const q of Q){ const r=q.rows.find(r=>r.ticker===t&&r.type==='SH'&&r.amt>0);
+    if(r){ const im=r.value/r.amt, now=(SA.quotes[t]||{}).last;
+      if(now&&now/im>=1.4) out.push(`${t} 建仓${q.label} $${im.toFixed(0)}→$${now.toLocaleString()} <span class="x">×${(now/im).toFixed(1)}</span>`);
+      break; } } });
+  $('deeds').innerHTML = '实盘代表作(建仓季期末价→现价,非他的成本): ' + out.join('　·　');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+name: deploy
+
+# 每次 push 到 main 自动部署到 Cloudflare Pages；也可手动触发。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+env:
+  PROJECT: follow-leopold-wen98       # → 网址 follow-leopold-wen98.pages.dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 部署到 Cloudflare Pages
+        env:
+          CF_TOKEN_RAW: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCT_RAW: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -e
+          # 1) 洗掉复制粘贴常带进来的不可见字符（空白 / U+2028 等），只留可见 ASCII
+          TOKEN=$(printf '%s' "$CF_TOKEN_RAW" | LC_ALL=C tr -cd '[:graph:]')
+          if [ -z "$TOKEN" ]; then
+            echo "::notice::尚未配置 CLOUDFLARE_API_TOKEN，先跳过部署（配好后自动生效）。"
+            exit 0
+          fi
+          echo "::add-mask::$TOKEN"
+          export CLOUDFLARE_API_TOKEN="$TOKEN"
+
+          # 2) Account ID：优先用密钥里填的（清洗+转小写）；没填再用 token 自动解析
+          ACCT=$(printf '%s' "$CF_ACCT_RAW" | LC_ALL=C tr -cd '[:graph:]' | tr 'A-Z' 'a-z')
+          if [ -z "$ACCT" ]; then
+            ACCT=$(curl -s -H "Authorization: Bearer $TOKEN" "https://api.cloudflare.com/client/v4/accounts?per_page=50" | jq -r '.result[0].id // empty')
+          fi
+          if [ -z "$ACCT" ]; then
+            echo "::error::没有可用的 Account ID（密钥未填且 token 无法自动解析）。"
+            exit 1
+          fi
+          echo "::add-mask::$ACCT"
+          export CLOUDFLARE_ACCOUNT_ID="$ACCT"
+
+          # 3) 建项目（已存在则忽略）→ 部署当前目录
+          npx --yes wrangler@4 pages project create "$PROJECT" --production-branch main 2>/dev/null || true
+          npx --yes wrangler@4 pages deploy . --project-name "$PROJECT" --branch main --commit-dirty=true
