@@ -104,8 +104,10 @@ QUOTE_SYMBOLS = ["NVDA","SMH","BE","SNDK","CRWV","IREN","CORZ","APLD","RIOT","CL
                  "PUMP","SEI","BTDR","HIVE",".VIX",".SPX",
                  # 前向荐股池(引擎A/B 用,随 daily.json picks 增删)
                  "AROC","ACLS","LEU","KLIC",
-                 # 盘面对照用(电力/大盘)
-                 "CEG","GEV",".IXIC"]
+                 # 盘面对照用(电力/大盘/利率)
+                 "CEG","GEV",".IXIC","US10Y","VRT","AVGO",
+                 # 新候选(变压器咽喉/核能下一棒/私募信贷)
+                 "CLF","SMR","OKLO","NNE","APO","POWL","NVT"]
 
 ACCS = [  # (filed, period, accession)  ——新申报出来后在此追加,或用 --edgar 自动发现
     ("2026-05-18", "2026-03-31", "000204572426000008"),
